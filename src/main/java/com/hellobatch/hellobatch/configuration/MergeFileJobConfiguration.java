@@ -23,7 +23,7 @@ public class MergeFileJobConfiguration {
     public Job job1(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager, DynamicMultiResourceItemReader<ETF> reader) {
         return new JobBuilder("job", jobRepository)
                 .start(
-                        new StepBuilder("testStep", jobRepository)
+                        new StepBuilder("downloadFile", jobRepository)
                                 .tasklet(
                                         (contribution, chunkContext) -> {
                                             ExecutionContext executionContext = chunkContext
@@ -41,7 +41,7 @@ public class MergeFileJobConfiguration {
                                 .build()
                 )
                 .next(
-                        new StepBuilder("testStep2", jobRepository)
+                        new StepBuilder("mergeFilesIntoSingleFile", jobRepository)
                                 .<ETF,ETF>chunk(10, platformTransactionManager)
                                 .reader(reader)
                                 .writer(chunk -> log.info(chunk.toString()))
